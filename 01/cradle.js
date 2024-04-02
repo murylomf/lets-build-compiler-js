@@ -6,7 +6,7 @@ let Look; // Lookahead Character
 
 // Read New Character From Input Stream
 function GetChar() {
-    Look = getNextChar(); // Assuming getNextChar is a function to read the next character
+    return Look
 }
 
 // Report an Error
