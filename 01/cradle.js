@@ -5,7 +5,7 @@ class Cradle {
   static TAB = '\t';
 
   // Variable Declarations
-  static Look = null; // Lookahead Character
+  static Look // Lookahead Character
   static async GetChar() {
     const rl = readline.createInterface({
         input: process.stdin,
@@ -15,14 +15,14 @@ class Cradle {
     return new Promise((resolve, reject) => {
         rl.question('Please enter a value: ', (input) => {
             rl.close();
-            Cradle.Look = input.trim();
+            Cradle.Look = input
             resolve(Cradle.Look);
         });
     });
 }
   // Report an Error
   static Error(s) {
-      console.log('\n' + '\x07' + 'Error: ' + s + '.');
+      console.error('\n' + '\x07' + 'Error: ' + s + '.');
   }
 
   // Report Error and Halt
@@ -102,3 +102,4 @@ class Cradle {
 }
 
 module.exports = Cradle;
+exports.Look = Cradle.Look
