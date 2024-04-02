@@ -1,83 +1,104 @@
-// Constant Declarations
-const TAB = '\t';
+const readline = require('readline');
 
-// Variable Declarations
-let Look; // Lookahead Character
+class Cradle {
+  // Constant Declarations
+  static TAB = '\t';
 
-// Read New Character From Input Stream
-function GetChar() {
-    return Look
+  // Variable Declarations
+  static Look = null; // Lookahead Character
+  static async GetChar() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    return new Promise((resolve, reject) => {
+        rl.question('Please enter a value: ', (input) => {
+            rl.close();
+            Cradle.Look = input.trim();
+            resolve(Cradle.Look);
+        });
+    });
+}
+  // Report an Error
+  static Error(s) {
+      console.log('\n' + '\x07' + 'Error: ' + s + '.');
+  }
+
+  // Report Error and Halt
+  static Abort(s) {
+      Cradle.Error(s);
+      process.exit(1);
+  }
+
+  // Report What Was Expected
+  static Expected(s) {
+      Cradle.Abort(s + ' Expected');
+  }
+
+  // Match a Specific Input Character
+  static Match(x) {
+      if (Cradle.Look === x)
+          Cradle.GetChar();
+      else
+          Cradle.Expected("'" + x + "'");
+  }
+
+  // Recognize an Alpha Character
+  static IsAlpha(c) {
+      return /[A-Za-z]/.test(c);
+  }
+
+  // Recognize a Decimal Digit
+  static IsDigit(c) {
+      return /[0-9]/.test(c);
+  }
+
+  // Get an Identifier
+   async GetName() {
+      let name;
+      if (!Cradle.IsAlpha(Cradle.Look))
+          Cradle.Expected('Name');
+      name = Cradle.Look.toUpperCase();
+      await Cradle.GetChar();
+      return name;
+  }
+
+  // Get a Number
+  static async GetNum() {
+      let num;
+      if (!Cradle.Look) {
+        await Cradle.GetChar();
+      }
+
+      if (!Cradle.IsDigit(Cradle.Look))
+          Cradle.Expected('Integer');
+
+      console.log(Cradle.Look)
+      num = Cradle.Look;
+      return num;
+  }
+
+  // Output a String with Tab
+  static Emit(s) {
+      process.stdout.write(Cradle.TAB + s);
+  }
+
+  // Output a String with Tab and CRLF
+  static EmitLn(s) {
+      Cradle.Emit(s);
+      process.stdout.write('\n');
+  }
+
+  // Initialize
+  static async Init() {
+      await Cradle.GetChar();
+  }
+
+  // Main Program
+  static main() {
+      Cradle.Init();
+  }
 }
 
-// Report an Error
-function Error(s) {
-    console.log('\n' + '\x07' + 'Error: ' + s + '.');
-}
-
-// Report Error and Halt
-function Abort(s) {
-    Error(s);
-    process.exit(1);
-}
-
-// Report What Was Expected
-function Expected(s) {
-    Abort(s + ' Expected');
-}
-
-// Match a Specific Input Character
-function Match(x) {
-    if (Look === x)
-        GetChar();
-    else
-        Expected("'" + x + "'");
-}
-
-// Recognize an Alpha Character
-function IsAlpha(c) {
-    return /[A-Za-z]/.test(c);
-}
-
-// Recognize a Decimal Digit
-function IsDigit(c) {
-    return /[0-9]/.test(c);
-}
-
-// Get an Identifier
-function GetName() {
-    let name;
-    if (!IsAlpha(Look))
-        Expected('Name');
-    name = Look.toUpperCase();
-    GetChar();
-    return name;
-}
-
-// Get a Number
-function GetNum() {
-    let num;
-    if (!IsDigit(Look))
-        Expected('Integer');
-    num = Look;
-    GetChar();
-    return num;
-}
-
-// Output a String with Tab
-function Emit(s) {
-    process.stdout.write(TAB + s);
-}
-
-// Output a String with Tab and CRLF
-function EmitLn(s) {
-    Emit(s);
-    process.stdout.write('\n');
-}
-
-// Initialize
-function Init() {
-    GetChar();
-}
-
-// Main Program
-Init();
+module.exports = Cradle;
